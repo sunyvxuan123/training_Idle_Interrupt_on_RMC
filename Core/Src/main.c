@@ -51,7 +51,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void buftoch(uint8_t  bbuf[], int16_t cch[]);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -111,7 +111,7 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_UARTEx_ReceiveToIdle_DMA(&huart3, buf, 25);
-  __HAL_DMA_DISABLE_IT(&huart3, DMA_IT_HT);
+  __HAL_DMA_DISABLE_IT(huart3.hdmarx, DMA_IT_HT);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -171,9 +171,8 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 { 
-  buftoch(buf, ch);
   if (huart == &huart3)
   {
     start_byte = buf[0];
@@ -194,26 +193,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     rcdata.byte_lose = flag_byte >> 2 & 0x01;
   }
     HAL_UARTEx_ReceiveToIdle_DMA(&huart3, buf, 25);
-  __HAL_DMA_DISABLE_IT(&huart3, DMA_IT_HT);
+  __HAL_DMA_DISABLE_IT(huart3.hdmarx, DMA_IT_HT);
 }
-void buftoch(uint8_t * bbuf[], int16_t *cch[]){
-  *cch[0] = (((int16_t)*bbuf[1] >> 0 | (int16_t)*bbuf[2] << 8) & 0x07FF) - 1024;
-  *cch[1] = (((int16_t)*bbuf[2] >> 3 | (int16_t)*bbuf[3] << 5) & 0x07FF) - 1024;
-  *cch[2] = (((int16_t)*bbuf[3] >> 6 | (int16_t)*bbuf[4] << 2 | (int16_t)*bbuf[5] << 10) & 0x07FF) - 1024;
-  *cch[3] = (((int16_t)*bbuf[5] >> 1 | (int16_t)*bbuf[6] << 7) & 0x07FF) - 1024;
-  *cch[4] = (((int16_t)*bbuf[6] >> 4 | (int16_t)*bbuf[7] << 4) & 0x07FF) - 1024;
-  *cch[5] = (((int16_t)*bbuf[7] >> 7 | (int16_t)*bbuf[8] << 1 | (int16_t)*bbuf[9] << 9) & 0x07FF) - 1024;
-  *cch[6] = (((int16_t)*bbuf[9] >> 2 | (int16_t)*bbuf[10] << 6) & 0x07FF) - 1024;
-  *cch[7] = (((int16_t)*bbuf[10] >> 5 | (int16_t)*bbuf[11] << 3) & 0x07FF) - 1024;
-  *cch[8] = (((int16_t)*bbuf[12] >> 0 | (int16_t)*bbuf[13] << 8) & 0x07FF) - 1024;
-  *cch[9] = (((int16_t)*bbuf[13] >> 3 | (int16_t)*bbuf[14] << 5) & 0x07FF) - 1024;
+void buftoch(uint8_t  bbuf[], int16_t cch[]){
+  cch[0] = (((int16_t)bbuf[1] >> 0 | (int16_t)bbuf[2] << 8) & 0x07FF) - 1024;
+  cch[1] = (((int16_t)bbuf[2] >> 3 | (int16_t)bbuf[3] << 5) & 0x07FF) - 1024;
+  cch[2] = (((int16_t)bbuf[3] >> 6 | (int16_t)bbuf[4] << 2 | (int16_t)bbuf[5] << 10) & 0x07FF) - 1024;
+  cch[3] = (((int16_t)bbuf[5] >> 1 | (int16_t)bbuf[6] << 7) & 0x07FF) - 1024;
+  cch[4] = (((int16_t)bbuf[6] >> 4 | (int16_t)bbuf[7] << 4) & 0x07FF) - 1024;
+  cch[5] = (((int16_t)bbuf[7] >> 7 | (int16_t)bbuf[8] << 1 | (int16_t)bbuf[9] << 9) & 0x07FF) - 1024;
+  cch[6] = (((int16_t)bbuf[9] >> 2 | (int16_t)bbuf[10] << 6) & 0x07FF) - 1024;
+  cch[7] = (((int16_t)bbuf[10] >> 5 | (int16_t)bbuf[11] << 3) & 0x07FF) - 1024;
+  cch[8] = (((int16_t)bbuf[12] >> 0 | (int16_t)bbuf[13] << 8) & 0x07FF) - 1024;
+  cch[9] = (((int16_t)bbuf[13] >> 3 | (int16_t)bbuf[14] << 5) & 0x07FF) - 1024;
 }
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
   if (huart == &huart3)
   {
     HAL_UARTEx_ReceiveToIdle_DMA(&huart3, buf, 25);
-    __HAL_DMA_DISABLE_IT(&huart3, DMA_IT_HT);
+    __HAL_DMA_DISABLE_IT(huart3.hdmarx, DMA_IT_HT);
   }
 }
 /* USER CODE END 4 */

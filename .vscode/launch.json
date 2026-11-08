@@ -129,7 +129,7 @@
         {
             "name": "J-Link",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/build/basic_framework.elf",
+            "executable": "${workspaceFolder}/build/week4_2.elf",
 
             "request": "launch",
             "type": "cortex-debug",
